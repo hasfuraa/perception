@@ -1,0 +1,6 @@
+numpy
+torch
+torchvision
+pytorch-lightning
+black
+tensorboardX
