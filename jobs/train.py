@@ -6,11 +6,11 @@ from torchvision.utils import make_grid
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from torch.utils.data import DataLoader
 from modules.resnet import ResNet
-from jobs.main import Dataloader, LightningModule
+from modules.lightning.runner import Dataloader, LightningModule, RunnerConfig
 
 
-def main() -> None:
-    model = LightningModule()
+def train() -> None:
+    model = LightningModule(RunnerConfig())
 
     trainer = pl.Trainer(
         max_epochs=20,
@@ -36,4 +36,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    train()

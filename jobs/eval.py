@@ -6,7 +6,7 @@ from torchvision.utils import make_grid
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from torch.utils.data import DataLoader
 from modules.resnet import ResNet
-from jobs.main import Dataloader, LightningModule
+from modules.lightning.runner import Dataloader, LightningModule
 import os
 
 CKPT_PATH = os.path.join(
@@ -15,7 +15,7 @@ CKPT_PATH = os.path.join(
 )
 
 
-def main() -> None:
+def eval() -> None:
     assert os.path.exists(CKPT_PATH), f"checkpoint path {CKPT_PATH} does not exist."
     model = LightningModule.load_from_checkpoint(CKPT_PATH)
 
@@ -27,4 +27,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    eval()

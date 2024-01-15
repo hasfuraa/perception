@@ -5,6 +5,12 @@ from typing import List
 
 # 3rd party imports.
 import torch
+from dataclasses import dataclass
+
+
+@dataclass
+class DETRConfig:
+    x_size: int = 32
 
 
 class Tokenizer(torch.nn.Module):
@@ -24,14 +30,20 @@ class Tokenizer(torch.nn.Module):
         self.max_pool1 = torch.nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.conv2 = torch.nn.Conv2d(
-            in_channels=self.num_channels, out_channels=self.num_channels * 2, kernel_size=3, padding="same"
+            in_channels=self.num_channels,
+            out_channels=self.num_channels * 2,
+            kernel_size=3,
+            padding="same",
         )
         self.bn2 = torch.nn.BatchNorm2d(num_features=self.num_channels * 2)
         self.relu2 = torch.nn.ReLU()
         self.max_pool2 = torch.nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.conv3 = torch.nn.Conv2d(
-            in_channels=self.num_channels * 2, out_channels=self.num_channels * 4, kernel_size=3, padding="same"
+            in_channels=self.num_channels * 2,
+            out_channels=self.num_channels * 4,
+            kernel_size=3,
+            padding="same",
         )
         self.bn3 = torch.nn.BatchNorm2d(num_features=self.num_channels * 4)
         self.relu3 = torch.nn.ReLU()
@@ -136,15 +148,19 @@ class Decoder(torch.nn.Module):
         super().__init__()
 
         num_heads = 1
-        d_embedding = 128 
+        d_embedding = 128
         hidden_dim = 256
 
         self.q = torch.nn.Embedding(10, d_embedding)
 
-        self.self_attention = torch.nn.MultiheadAttention(d_embedding, num_heads, batch_first=True)
+        self.self_attention = torch.nn.MultiheadAttention(
+            d_embedding, num_heads, batch_first=True
+        )
         self.sa_norm = torch.nn.LayerNorm((10, d_embedding))
 
-        self.cross_attention = torch.nn.MultiheadAttention(d_embedding, num_heads, batch_first=True)
+        self.cross_attention = torch.nn.MultiheadAttention(
+            d_embedding, num_heads, batch_first=True
+        )
         self.ca_norm = torch.nn.LayerNorm((10, d_model))
 
         self.linear1 = torch.nn.Linear(in_features=d_embedding, out_features=hidden_dim)
@@ -197,7 +213,7 @@ class DETR(torch.nn.Module):
     TODO
     """
 
-    def __init__(self) -> None:
+    def __init__(self, model_config: DETRConfig) -> None:
         """
         TODO
         """
@@ -207,7 +223,6 @@ class DETR(torch.nn.Module):
         self.encoder = Encoder(d_model=128, max_tokens=64)
         self.decoder = Decoder(d_model=128, max_tokens=64)
         self.head = Head()
-
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -259,7 +274,7 @@ if __name__ == "__main__":
 
     # Test detr.
     detr_x = torch.rand(2, 1, 32, 32)
-    detr = DETR()
+    detr = DETR(DETRConfig())
     detr_y = detr(detr_x)
     assert detr_y.shape == (2, 10)
     print("DETR passes.")

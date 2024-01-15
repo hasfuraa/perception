@@ -1,3 +1,4 @@
+from typing import Union
 import torch
 import pytorch_lightning as pl
 from torchvision import datasets
@@ -5,15 +6,36 @@ from torchvision.transforms import ToTensor
 from torchvision.utils import make_grid
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from torch.utils.data import DataLoader
-from modules.resnet import ResNet
-from modules.detr import DETR
+from modules.resnet import ResNet, ResNetConfig
+from modules.detr import DETR, DETRConfig
+from enum import Enum
+from dataclasses import dataclass, field
+
+
+class ModelType(Enum):
+    DETR = 0
+    ResNet = 1
+
+
+@dataclass
+class RunnerConfig:
+    model_type: ModelType = ModelType.DETR
+    model_config: Union[ResNetConfig, DETRConfig] = field(default_factory=DETRConfig)
 
 
 class LightningModule(pl.LightningModule):
-    def __init__(self) -> None:
+    def __init__(self, runner_config: RunnerConfig) -> None:
         super().__init__()
-        # self.model = ResNet(stages=[2, 2, 2, 2], x_size=32)
-        self.model = DETR()
+
+        if runner_config.model_type == ModelType.ResNet:
+            self.model = ResNet(runner_config.model_config)
+        elif runner_config.model_type == ModelType.DETR:
+            self.model = DETR(runner_config.model_config)
+        else:
+            raise NotImplementedError(
+                f"Model type '{runner_config.model_type}' not supported."
+            )
+
         self.loss = torch.nn.CrossEntropyLoss(reduction="mean")
         self.reshaped_inputs = None
         self.metrics = []

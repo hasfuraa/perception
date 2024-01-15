@@ -5,6 +5,13 @@ from typing import List
 
 # 3rd party imports.
 import torch
+from dataclasses import dataclass, field
+
+
+@dataclass
+class ResNetConfig:
+    stages: List[int] = field(default_factory=[2, 2, 2, 2])
+    x_size: int = 32
 
 
 class BasicBlock(torch.nn.Module):
@@ -102,14 +109,14 @@ class ResNet(torch.nn.Module):
     TODO
     """
 
-    def __init__(self, stages: List[int], x_size) -> None:
+    def __init__(self, model_config: ResNetConfig) -> None:
         """
         TODO
         """
         super().__init__()
 
         # Assertions.
-        assert len(stages) == 4
+        assert len(model_config.stages) == 4
 
         # Params.
         num_channels = 64
@@ -123,15 +130,19 @@ class ResNet(torch.nn.Module):
         self.max_pool = torch.nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         # Stages.
-        self.stage1 = self._make_stage(stages[0], num_channels * 2**0)
-        self.stage2 = self._make_stage(stages[1], num_channels * 2**1)
-        self.stage3 = self._make_stage(stages[2], num_channels * 2**2)
-        self.stage4 = self._make_stage(stages[3], num_channels * 2**3)
+        self.stage1 = self._make_stage(model_config.stages[0], num_channels * 2**0)
+        self.stage2 = self._make_stage(model_config.stages[1], num_channels * 2**1)
+        self.stage3 = self._make_stage(model_config.stages[2], num_channels * 2**2)
+        self.stage4 = self._make_stage(model_config.stages[3], num_channels * 2**3)
 
         # Final ops.
         self.avg_pool = torch.nn.AvgPool2d(kernel_size=3, stride=1, padding=1)
         self.flatten = torch.nn.Flatten()
-        in_features = (num_channels * 16) * round(x_size / 16) * round(x_size / 16)
+        in_features = (
+            (num_channels * 16)
+            * round(model_config.x_size / 16)
+            * round(model_config.x_size / 16)
+        )
         self.fc = torch.nn.Linear(in_features=in_features, out_features=10)
         self.softmax = torch.nn.Softmax(dim=1)
 
@@ -177,15 +188,18 @@ if __name__ == "__main__":
     basic_block_downsample = BasicBlock(64, True)
     y = basic_block_downsample(x)
     assert y.shape == (2, 128, 64, 64)
+    print("Pass basic block test1.")
 
     x = torch.rand(2, 64, 64, 64)
     basic_block = BasicBlock(64, False)
     y = basic_block(x)
     assert y.shape == (2, 64, 64, 64)
+    print("Pass basic block test2.")
 
     # Test ResNet18
-    resnet18_config = [2, 2, 2, 2]
+    resnet18_config = ResNetConfig(stages=[2, 2, 2, 2], x_size=28)
     resnet18 = ResNet(resnet18_config)
     x = torch.rand(2, 1, 28, 28)
     y = resnet18(x)
     assert y.shape == (2, 10)
+    print("Pass resnet18 test.")
