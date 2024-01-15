@@ -22,7 +22,9 @@ class RunnerConfig:
     model_type: ModelType = ModelType.DETR
     model_config: Union[ResNetConfig, DETRConfig] = field(default_factory=DETRConfig)
 
+
 RUNNER_CONFIG = RunnerConfig()
+
 
 class LightningModule(pl.LightningModule):
     def __init__(self) -> None:

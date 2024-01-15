@@ -11,10 +11,10 @@ pip install -r requirements.txt
 python jobs/train.py
 
 # Evaluate the checkpoints dumped to disk.
-python jobs/eval.py --ckpt <PATH_TO_CKPT>
+python jobs/eval.py --ckpt-path `pwd`/training/logs/lightning_logs/checkpoints/epoch=<EPOCH_NUMBER>-step=<STEP_NUMBER>.ckpt
 
 # (Optional) Tensorboard
-tensorboard --logdir <PATH_TO_LOGDIR>
+tensorboard --logdir training/logs/lightning_logs/version_<VERSION_NUMBER>/
 ```
 
 # Sample Output
