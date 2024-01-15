@@ -10,7 +10,7 @@ from modules.lightning.runner import Dataloader, LightningModule, RunnerConfig
 
 
 def train() -> None:
-    model = LightningModule(RunnerConfig())
+    model = LightningModule()
 
     trainer = pl.Trainer(
         max_epochs=20,

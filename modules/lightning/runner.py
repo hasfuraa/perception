@@ -22,18 +22,19 @@ class RunnerConfig:
     model_type: ModelType = ModelType.DETR
     model_config: Union[ResNetConfig, DETRConfig] = field(default_factory=DETRConfig)
 
+RUNNER_CONFIG = RunnerConfig()
 
 class LightningModule(pl.LightningModule):
-    def __init__(self, runner_config: RunnerConfig) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
-        if runner_config.model_type == ModelType.ResNet:
-            self.model = ResNet(runner_config.model_config)
-        elif runner_config.model_type == ModelType.DETR:
-            self.model = DETR(runner_config.model_config)
+        if RUNNER_CONFIG.model_type == ModelType.ResNet:
+            self.model = ResNet(RUNNER_CONFIG.model_config)
+        elif RUNNER_CONFIG.model_type == ModelType.DETR:
+            self.model = DETR(RUNNER_CONFIG.model_config)
         else:
             raise NotImplementedError(
-                f"Model type '{runner_config.model_type}' not supported."
+                f"Model type '{RUNNER_CONFIG.model_type}' not supported."
             )
 
         self.loss = torch.nn.CrossEntropyLoss(reduction="mean")
