@@ -6,12 +6,14 @@ from torchvision.utils import make_grid
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from torch.utils.data import DataLoader
 from modules.resnet import ResNet
+from modules.detr import DETR
 
 
 class LightningModule(pl.LightningModule):
     def __init__(self) -> None:
         super().__init__()
-        self.model = ResNet(stages=[2, 2, 2, 2], x_size=32)
+        # self.model = ResNet(stages=[2, 2, 2, 2], x_size=32)
+        self.model = DETR()
         self.loss = torch.nn.CrossEntropyLoss(reduction="mean")
         self.reshaped_inputs = None
         self.metrics = []

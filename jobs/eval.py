@@ -11,7 +11,7 @@ import os
 
 CKPT_PATH = os.path.join(
     os.path.dirname(__file__),
-    "../training/logs/lightning_logs/version_61/checkpoints/epoch=1-step=7500.ckpt",
+    "../training/logs/lightning_logs/version_62/checkpoints/epoch=8-step=33750.ckpt",
 )
 
 

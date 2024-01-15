@@ -132,7 +132,6 @@ class ResNet(torch.nn.Module):
         self.avg_pool = torch.nn.AvgPool2d(kernel_size=3, stride=1, padding=1)
         self.flatten = torch.nn.Flatten()
         in_features = (num_channels * 16) * round(x_size / 16) * round(x_size / 16)
-        # import pdb; pdb.set_trace()
         self.fc = torch.nn.Linear(in_features=in_features, out_features=10)
         self.softmax = torch.nn.Softmax(dim=1)
 
