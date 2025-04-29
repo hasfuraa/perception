@@ -1,5 +1,5 @@
 # Overview
-Reimplementation of CNN and transformer based 2d object detection. Used purely as a peronsal learning tool. No guarantees on quality or correctness :)
+Reimplementation of CNN and transformer based 2d object detection. Just for fun :)
 
 # Quickstart
 ```bash
